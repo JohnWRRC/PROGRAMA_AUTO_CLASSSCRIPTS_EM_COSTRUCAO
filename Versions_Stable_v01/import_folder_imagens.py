@@ -24,8 +24,11 @@ def import_fd(folder_files):
         
         out=i.replace('.tif','')
         list_patter.append(out)
-        grass.run_command('r.in.gdal',input=i,out=out,overwrite=True,flags="o")
+        #print out
+        #grass.run_command('r.in.gdal',input=i,out=out,overwrite=True,flags="o")
     return list_patter
     
+
+ 
     
-        
+

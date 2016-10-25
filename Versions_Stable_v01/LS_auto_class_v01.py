@@ -65,31 +65,31 @@ def selecDirectory_folder():
 
 
 
-class Form1(wx.Panel):
+class Classification(wx.Panel):
     def __init__(self, parent, id):
         wx.Panel.__init__(self, parent, id)
         
         #variavels_______________________________________
-        Form1.mapa_entrada=''
+        self.mapa_entrada=''
         
         
         
-        Form1.background_filename=[]
+        self.background_filename=[]
         
-        Form1.size = 450
-        Form1.hsize = 450
+        self.size = 450
+        self.hsize = 450
         
-        Form1.formcalculate='Multiple'
-        Form1.species_profile_group=''
-        Form1.speciesList=[]
-        Form1.species_profile=''
+        self.formcalculate='Multiple'
+        self.species_profile_group=''
+        self.speciesList=[]
+        self.species_profile=''
         
         
         
-        Form1.label_prefix=''
-        Form1.RedularExp=''
-        Form1.listMapsPng=[]
-        Form1.listMapsPngAux=[]
+        self.label_prefix=''
+        self.RedularExp=''
+        self.listMapsPng=[]
+        self.listMapsPngAux=[]
         
         
          
@@ -100,20 +100,20 @@ class Form1(wx.Panel):
         
         
         #
-        Form1.dir_in=''
-        Form1.dir_out='E:\data_2015\___john\Desenvolvimentos\aplications\Aplicacoes_grass\automatic classification'
-        Form1.Chech_single=0
-        Form1.Chech_mult=0
-        Form1.import_map=''
-        Form1.out_map=''
-        Form1.group_img=''
-        Form1.thrs=0.25
-        Form1.Misize=200
-        Form1.out_name_vect=''
-        Form1.nclass='10'
-        Form1.list_pattern=''
-        Form1.dir_out_vect=''
-        Form1.classify=0
+        self.dir_in=''
+        self.dir_out='E:\data_2015\___john\Desenvolvimentos\aplications\Aplicacoes_grass\automatic classification'
+        self.Chech_single=0
+        self.Chech_mult=0
+        self.import_map=''
+        self.out_map=''
+        self.group_img=''
+        self.thrs=0.25
+        self.Misize=200
+        self.out_name_vect=''
+        self.nclass='10'
+        self.list_pattern=''
+        self.dir_out_vect=''
+        self.classify=0
         
         
         
@@ -121,20 +121,20 @@ class Form1(wx.Panel):
         #________________________________________________
 
         #self.speciesList = ['Random walk','Core dependent','Frag. dependent', 'Habitat dependent', 'Moderately generalist', 'Highly generalist']
-        #Form1.speciesList=grass.mlist_grouped ('rast', pattern='(*)') ['PERMANENT']
+        #self.speciesList=grass.mlist_grouped ('rast', pattern='(*)') ['PERMANENT']
         
         #____________________________________________________________________________
         
         
-        Form1.start_popsize=5
-        Form1.numberruns=100
-        Form1.timesteps=200
+        self.start_popsize=5
+        self.numberruns=100
+        self.timesteps=200
 
 
-        #Form1.dirout=selecdirectori()
+        #self.dirout=selecdirectori()
 
         
-        Form1.output_prefix2='Nome do arquivo + ext '
+        self.output_prefix2='Nome do arquivo + ext '
 
 
         # titulo
@@ -241,12 +241,12 @@ class Form1(wx.Panel):
  
     def EvtRadioBox(self, event):
       if event.GetId()==92:
-        Form1.formcalculate=event.GetString()
-        print Form1.formcalculate
-        if Form1.formcalculate=="Single":
-          Form1.file_sigle=''
-          Form1.file_sigle=selecdirectori()
-          print Form1.file_sigle
+        self.formcalculate=event.GetString()
+        print self.formcalculate
+        if self.formcalculate=="Single":
+          self.file_sigle=''
+          self.file_sigle=selecdirectori()
+          print self.file_sigle
           #______________________________________________________________________________________________________
         else:
           self.Refresh()
@@ -262,7 +262,7 @@ class Form1(wx.Panel):
     #______________________________________________________________________________________________________    
     def EvtComboBox(self, event):
         if event.GetId()==93:   #93==Species Profile Combo box
-            Form1.mapa_entrada=event.GetString()
+            self.mapa_entrada=event.GetString()
             self.logger.AppendText('Map : %s' % event.GetString())
         else:
             self.logger.AppendText('EvtComboBox: NEED TO BE SPECIFYED' )
@@ -283,66 +283,73 @@ class Form1(wx.Panel):
           d.ShowModal() # Shows it
           d.Destroy() # finally destroy it when finished.
                
-          Form1.dir_out=selecDirectory_folder()
-          self.logger.AppendText('Directory output :'+Form1.dir_out+' \n ')
-          self.logger.AppendText('runing... :'+Form1.import_map+' \n ')
-          if Form1.Chech_single==1:
+          self.dir_out=selecDirectory_folder()
+          self.logger.AppendText('Directory output :'+self.dir_out+' \n ')
+          self.logger.AppendText('runing... :'+self.import_map+' \n ')
+          if self.Chech_single==1:
             import Cria_grupo
             import v_what
             import prepara_kmeans
-            Form1.out_map=Form1.import_map.split('\\');Form1.out_map=Form1.out_map[-1].replace('.','_')            
-            grass.run_command('r.in.gdal',input=Form1.import_map,out=Form1.out_map,overwrite=True,flags="o")
-            Form1.group_img=grass.list_grouped('rast', pattern='*'+Form1.out_map+'*') ['PERMANENT']
-            Cria_grupo.CriaGrupo(Form1.group_img,Form1.group_img[0])
-            grass.run_command('g.region', rast=Form1.group_img[0],verbose=False)
-            grass.run_command('i.segment', group='Grupo',output=Form1.group_img[0]+'_segment_thre'+`Form1.thrs`+'_'+`Form1.Misize`,threshold=Form1.thrs, minsize=Form1.Misize,overwrite=True)
-            Form1.out_name_vect=Form1.group_img[0]+'_segment_thre'+`Form1.thrs`+'_'+`Form1.Misize`
-            Form1.out_name_vect=Form1.out_name_vect.replace('.','_')
-            Form1.out_name_vect=Form1.out_name_vect.replace('-','_')
-            Form1.out_name_vect='A'+Form1.out_name_vect
-            grass.run_command('r.to.vect',input=Form1.group_img[0]+'_segment_thre'+`Form1.thrs`+'_'+`Form1.Misize`,output=Form1.out_name_vect,type='area',overwrite=True)
-            if Form1.classify==1:
-              v_what.v_what(Form1.group_img,Form1.out_name_vect)
-            os.chdir(Form1.dir_out)
-            Form1.dir_out_vect=Form1.dir_out.replace("\\",'/').replace("\n",'/n').replace('\a','/a')
+            self.out_map=self.import_map.split('\\');self.out_map=self.out_map[-1].replace('.','_')            
+            grass.run_command('r.in.gdal',input=self.import_map,out=self.out_map,overwrite=True,flags="o")
+            self.group_img=grass.list_grouped('rast', pattern='*'+self.out_map+'*') ['PERMANENT']
+            Cria_grupo.CriaGrupo(self.group_img,self.group_img[0])
+            grass.run_command('g.region', rast=self.group_img[0],verbose=False)
+            grass.run_command('i.segment', group='Grupo',output=self.group_img[0]+'_segment_thre'+`self.thrs`+'_'+`self.Misize`,threshold=self.thrs, minsize=self.Misize,overwrite=True)
+            self.out_name_vect=self.group_img[0]+'_segment_thre'+`self.thrs`+'_'+`self.Misize`
+            self.out_name_vect=self.out_name_vect.replace('.','_')
+            self.out_name_vect=self.out_name_vect.replace('-','_')
+            self.out_name_vect='A'+self.out_name_vect
+            grass.run_command('r.to.vect',input=self.group_img[0]+'_segment_thre'+`self.thrs`+'_'+`self.Misize`,output=self.out_name_vect,type='area',overwrite=True)
+            if self.classify==1:
+              v_what.v_what(self.group_img,self.out_name_vect)
+            os.chdir(self.dir_out)
+            self.dir_out_vect=self.dir_out.replace("\\",'/').replace("\n",'/n').replace('\a','/a')
             
-            grass.run_command('v.out.ogr', input=Form1.out_name_vect, output=Form1.dir_out_vect+'/'+Form1.out_name_vect+'.shp',type='area',flags='c',quiet=True )
-            if Form1.classify==1:
-              os.chdir(Form1.dir_out)
-              prepara_kmeans.prep_kmean(Form1.out_name_vect, Form1.dir_out, Form1.nclass) 
-              p = Popen([r"C:\Program Files\R\R-2.15.3\bin\x64\Rscript.exe",Form1.dir_out_vect+'/'+"Kmeans_final.txt"])
+            grass.run_command('v.out.ogr', input=self.out_name_vect, output=self.dir_out_vect+'/'+self.out_name_vect+'.shp',type='area',flags='c',quiet=True )
+            if self.classify==1:
+              os.chdir(self.dir_out)
+              prepara_kmeans.prep_kmean(self.out_name_vect, self.dir_out, self.nclass) 
+              p = Popen([r"C:\Program Files\R\R-2.15.3\bin\x64\Rscript.exe",self.dir_out_vect+'/'+"Kmeans_final.txt"])
 
             grass.run_command('g.remove',flags='f',type="group",pattern='*Grupo*')
 
         
-          if Form1.Chech_mult==1:
+          if self.Chech_mult==1:
             import import_folder_imagens
             import Cria_grupo
             import v_what
             import prepara_kmeans            
-            Form1.list_pattern=import_folder_imagens.import_fd(folder_files=Form1.dir_in)
-            for i in Form1.list_pattern:
+            self.list_pattern=import_folder_imagens.import_fd(folder_files=self.dir_in)
+
+            for i in self.list_pattern:
+              os.chdir(self.dir_in)
+              grass.run_command('r.in.gdal',input=i+".tif",out=i,overwrite=True,flags="o")
+              #grass.run_command('g.remove',flags='f',type="group",pattern='*Grupo*')
+              self.group_img=grass.list_grouped('rast', pattern='*'+i+'*') ['PERMANENT']
               grass.run_command('g.remove',flags='f',type="group",pattern='*Grupo*')
-              Form1.group_img=grass.list_grouped('rast', pattern='*'+i+'*') ['PERMANENT']
-              grass.run_command('g.remove',flags='f',type="group",pattern='*Grupo*')
-              Cria_grupo.CriaGrupo(Form1.group_img,Form1.group_img[0])
-              grass.run_command('g.region', rast=Form1.group_img[0],verbose=False)
-              grass.run_command('i.segment', group='Grupo',output=i+'_segment_thre'+`Form1.thrs`+'_'+`Form1.Misize`,threshold=Form1.thrs, minsize=Form1.Misize,overwrite=True )
-              Form1.out_name_vect=i+'_segment_thre'+`Form1.thrs`+'_'+`Form1.Misize`
-              Form1.out_name_vect=Form1.out_name_vect.replace('.','_')
-              Form1.out_name_vect=Form1.out_name_vect.replace('-','_')
-              Form1.out_name_vect='A'+Form1.out_name_vect
-              grass.run_command('r.to.vect',input=i+'_segment_thre'+`Form1.thrs`+'_'+`Form1.Misize`,output=Form1.out_name_vect,type='area',overwrite=True )
-              if Form1.classify==1:
-                v_what.v_what(Form1.group_img,Form1.out_name_vect)
+              Cria_grupo.CriaGrupo(self.group_img,self.group_img[0])
+              grass.run_command('g.region', rast=self.group_img[0],verbose=False)
+              grass.run_command('i.segment', group='Grupo',output=i+'_segment_thre'+`self.thrs`+'_'+`self.Misize`,threshold=self.thrs, minsize=self.Misize,overwrite=True )
+              self.out_name_vect=i+'_segment_thre'+`self.thrs`+'_'+`self.Misize`
+              self.out_name_vect=self.out_name_vect.replace('.','_')
+              self.out_name_vect=self.out_name_vect.replace('-','_')
+              self.out_name_vect='JWR_'+self.out_name_vect
               
-              Form1.dir_out_vect=Form1.dir_out.replace("\\",'/').replace("\n",'/n').replace('\a','/a')
-              grass.run_command('v.out.ogr', input=Form1.out_name_vect, output=Form1.dir_out+'/'+Form1.out_name_vect+'.shp',type='area',overwrite=True,flags='c',quiet=True)
-              if Form1.classify==1:
-                prepara_kmeans.prep_kmean(Form1.out_name_vect, Form1.dir_out, Form1.nclass) 
-                p = Popen([r"C:\Program Files\R\R-2.15.3\bin\x64\Rscript.exe",Form1.dir_out_vect+'/'+"Kmeans_final.txt"])  
               
-              grass.run_command('g.remove',flags='f',type="group",pattern='*Grupo*')   
+              
+              grass.run_command('r.to.vect',input=i+'_segment_thre'+`self.thrs`+'_'+`self.Misize`,output=self.out_name_vect,type='area',overwrite=True )
+              if self.classify==1:
+                v_what.v_what(self.group_img,self.out_name_vect)
+              
+              self.dir_out_vect=self.dir_out.replace("\\",'/').replace("\n",'/n').replace('\a','/a')
+              grass.run_command('v.out.ogr', input=self.out_name_vect, output=self.dir_out+'/'+self.out_name_vect+'.shp',type='area',overwrite=True,flags='c',quiet=True)
+              if self.classify==1:
+                prepara_kmeans.prep_kmean(self.out_name_vect, self.dir_out, self.nclass) 
+                p = Popen([r"C:\Program Files\R\R-2.15.3\bin\x64\Rscript.exe",self.dir_out_vect+'/'+"Kmeans_final.txt"])  
+              
+              for i in self.group_img:
+                grass.run_command('g.remove',flags='f',type="raster",pattern='*'+i+'*')
           
           d= wx.MessageDialog( self, " Finish \n"
                                " ","", wx.OK)
@@ -355,14 +362,14 @@ class Form1(wx.Panel):
        
         
         if event.GetId()==11:
-          if Form1.Chech_mult==1:
-            Form1.dir_in=selecDirectory_folder()
-            self.logger.AppendText('Directory input :'+Form1.dir_in+' \n ')
+          if self.Chech_mult==1:
+            self.dir_in=selecDirectory_folder()
+            self.logger.AppendText('Directory input :'+self.dir_in+' \n ')
             
                             
-          if Form1.Chech_single==1:
-            Form1.import_map=selecdirectori()
-            self.logger.AppendText('File input :'+Form1.import_map+' \n ')
+          if self.Chech_single==1:
+            self.import_map=selecdirectori()
+            self.logger.AppendText('File input :'+self.import_map+' \n ')
             
                         
             
@@ -377,19 +384,19 @@ class Form1(wx.Panel):
         #self.logger.AppendText('EvtText: %s\n' % event.GetString())
       #______________________________________________________________________________________________________________ 
         if event.GetId()==192: #20=output_prefix
-          Form1.thrs=event.GetString()
-          self.logger.AppendText('Treshold :'+Form1.thrs+' \n ')
-          Form1.thrs=float(Form1.thrs)
+          self.thrs=event.GetString()
+          self.logger.AppendText('Treshold :'+self.thrs+' \n ')
+          self.thrs=float(self.thrs)
           
             
         if event.GetId()==193: #20=output_prefix
-          Form1.Misize=event.GetString()
-          self.logger.AppendText('Min size :'+Form1.Misize+' \n ')
-          Form1.Misize=float(Form1.Misize)
+          self.Misize=event.GetString()
+          self.logger.AppendText('Min size :'+self.Misize+' \n ')
+          self.Misize=float(self.Misize)
           
         if event.GetId()==194: #20=output_prefix
-          Form1.nclass=event.GetString() 
-          self.logger.AppendText('N class :'+Form1.nclass+' \n ')
+          self.nclass=event.GetString() 
+          self.logger.AppendText('N class :'+self.nclass+' \n ')
                    
             
             
@@ -401,12 +408,12 @@ class Form1(wx.Panel):
     #______________________________________________________________________________________________________
     def EvtCheckBox(self, event):
         if event.GetId()==95:
-          if Form1.Chech_mult==1:
-            Form1.Chech_mult=0
+          if self.Chech_mult==1:
+            self.Chech_mult=0
           else: 
-            Form1.Chech_mult=1
+            self.Chech_mult=1
             
-          if Form1.Chech_mult==1:
+          if self.Chech_mult==1:
             
             self.logger.AppendText('Option Mult file selected : TRUE\n')
           else:
@@ -416,12 +423,12 @@ class Form1(wx.Panel):
             
             
         if event.GetId()==96:
-          if Form1.Chech_single==1:
-            Form1.Chech_single=0
+          if self.Chech_single==1:
+            self.Chech_single=0
           else:
-            Form1.Chech_single=1
+            self.Chech_single=1
           
-          if Form1.Chech_single==1:
+          if self.Chech_single==1:
             self.logger.AppendText('Option Single selected :TRUE\n')
           else:
             self.logger.AppendText('Option Single selected :FALSE\n')
@@ -429,12 +436,12 @@ class Form1(wx.Panel):
         
         
         if event.GetId()==97:
-          if Form1.classify==1: 
-            Form1.classify=0
+          if self.classify==1: 
+            self.classify=0
           else:
-            Form1.classify=1
+            self.classify=1
              
-          if Form1.classify==1:  
+          if self.classify==1:  
             self.logger.AppendText('Option classify selected: TRUE\n')        
           else:
             self.logger.AppendText('Option classify selected: FALSE\n')  
@@ -461,7 +468,7 @@ class Form1(wx.Panel):
 if __name__ == "__main__":
     app = wx.PySimpleApp()
     frame = wx.Frame(None, -1, "JWR & MHV", size=(410,450))
-    Form1(frame,-1)
+    Classification(frame,-1)
     frame.Show(1)
     
     app.MainLoop()
